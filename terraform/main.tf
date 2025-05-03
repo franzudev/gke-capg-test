@@ -1,12 +1,10 @@
 module "vpc" {
-  source  = "terraform-google-modules/network/google"
-  version = "~> 11.0"
+  source = "git::https://github.com/terraform-google-modules/terraform-google-network.git?ref=7011e6e94230ac07522370ad7b7371b1aa71a9cc"
 
   project_id   = var.google_project_id
   network_name = var.gke_network_name
   routing_mode = "GLOBAL"
-
-  subnets = var.gke_subnets
+  subnets      = var.gke_subnets
 
   secondary_ranges = {
     capg-subnet = [
@@ -33,7 +31,7 @@ module "vpc" {
 }
 
 module "gke" {
-  source                     = "terraform-google-modules/kubernetes-engine/google"
+  source                     = "git::https://github.com/terraform-google-modules/terraform-google-kubernetes-engine.git?ref=ae3c8fe842c84f0f1b4c06dabd7d2992126b80ab"
   project_id                 = "secure-answer-458706-p7"
   name                       = "capg"
   region                     = var.google_region
