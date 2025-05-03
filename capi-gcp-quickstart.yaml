@@ -1,0 +1,128 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: capg
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: capg-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: GCPCluster
+    name: capg
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPCluster
+metadata:
+  name: capg
+  namespace: default
+spec:
+  network:
+    name: default
+  project: secure-answer-458706-p7
+  region: europe-west1
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: capg-control-plane
+  namespace: default
+spec:
+  kubeadmConfigSpec:
+    clusterConfiguration:
+      apiServer:
+        extraArgs:
+          cloud-provider: gce
+          feature-gates: DisableCloudProviders=false,DisableKubeletCloudCredentialProviders=false
+        timeoutForControlPlane: 20m
+      controllerManager:
+        extraArgs:
+          allocate-node-cidrs: "false"
+          cloud-provider: gce
+          feature-gates: DisableCloudProviders=false,DisableKubeletCloudCredentialProviders=false
+    initConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: gce
+          feature-gates: DisableCloudProviders=false,DisableKubeletCloudCredentialProviders=false
+        name: '{{ ds.meta_data.local_hostname.split(".")[0] }}'
+    joinConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: gce
+          feature-gates: DisableCloudProviders=false,DisableKubeletCloudCredentialProviders=false
+        name: '{{ ds.meta_data.local_hostname.split(".")[0] }}'
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: GCPMachineTemplate
+      name: capg-control-plane
+  replicas: 1
+  version: 1.32.4
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPMachineTemplate
+metadata:
+  name: capg-control-plane
+  namespace: default
+spec:
+  template:
+    spec:
+      image: projects/secure-answer-458706-p7/global/images/cluster-api-ubuntu-2404-v1-31-4-1746256292
+      instanceType: n1-standard-2
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: capg-md-0
+  namespace: default
+spec:
+  clusterName: capg
+  replicas: 1
+  selector:
+    matchLabels: null
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: capg-md-0
+      clusterName: capg
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: GCPMachineTemplate
+        name: capg-md-0
+      version: 1.32.4
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPMachineTemplate
+metadata:
+  name: capg-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      image: projects/secure-answer-458706-p7/global/images/cluster-api-ubuntu-2404-v1-31-4-1746256292
+      instanceType: n1-standard-2
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: capg-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cloud-provider: gce
+            feature-gates: DisableCloudProviders=false,DisableKubeletCloudCredentialProviders=false
+          name: '{{ ds.meta_data.local_hostname.split(".")[0] }}'
