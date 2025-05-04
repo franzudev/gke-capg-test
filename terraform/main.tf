@@ -113,3 +113,9 @@ module "gke" {
     ]
   }
 }
+
+module "day2" {
+  source = "./modules/day2"
+
+  provisioned = var.provisioned
+}
