@@ -33,9 +33,3 @@ variable "gke_zones" {
   description = "The zones of your GCP network"
   default     = ["europe-west1-b"]
 }
-
-
-variable "provisioned" {
-  default = false
-  type = bool
-}
