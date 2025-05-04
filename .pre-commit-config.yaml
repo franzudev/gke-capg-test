@@ -7,6 +7,7 @@ repos:
   - id: trailing-whitespace
   - id: end-of-file-fixer
   - id: check-yaml
+    exclude: gitops/resources/helm-capg-quickstart/templates
   - id: check-added-large-files
 
 - repo: https://github.com/bridgecrewio/checkov
