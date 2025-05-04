@@ -1,0 +1,25 @@
+region: &region europe-west1
+project_id: secure-answer-458706-p7
+kubernetes_version: 1.31.4
+
+cluster:
+  name: capg
+  network:
+    name: capg-vpc
+    pods_cidr: 192.168.64.0/24
+    services_cidr: 192.168.65.0/24
+    subnets:
+      - name: capg-subnet
+        region: *region
+
+mdMachines:
+  image: projects/secure-answer-458706-p7/global/images/cluster-api-ubuntu-2404-v1-31-4-1746256292
+  subnet: capg-subnet
+  instanceType: n1-standard-2
+  publicIP: true
+
+cpMachines:
+  image: projects/secure-answer-458706-p7/global/images/cluster-api-ubuntu-2404-v1-31-4-1746256292
+  subnet: capg-subnet
+  instanceType: n1-standard-2
+  publicIP: true

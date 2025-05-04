@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: capi-operator
+    namespace: argocd
+spec:
+    project: default
+    source:
+        repoURL: https://kubernetes-sigs.github.io/cluster-api-operator
+        chart: cluster-api-operator
+        targetRevision: latest
+        helm:
+            parameters:
+                - name: configSecret.name
+                  value: REPLACE_WITH_SECRET_NAME
+                - name: configSecret.namespace
+                  value: REPLACE_WITH_SECRET_NAMESPACE
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: capi-operator-system
+    syncPolicy:
+        automated: {}
+        syncOptions:
+            - CreateNamespace=true

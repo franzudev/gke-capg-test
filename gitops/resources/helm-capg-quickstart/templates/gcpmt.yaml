@@ -1,0 +1,13 @@
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPMachineTemplate
+metadata:
+  name: {{ .Values.cluster.name }}-md-0
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    spec:
+      image: {{ .Values.mdMachines.image }}
+      instanceType: {{ .Values.mdMachines.instanceType }}
+      subnet: {{ .Values.mdMachines.subnet }}
+      publicIP: true

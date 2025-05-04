@@ -1,0 +1,15 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPCluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  network:
+    name: {{ .Values.cluster.network.name }}
+    {{- range .Values.cluster.network.subnets }}
+    subnets:
+      - name: {{ .name }}
+        region: {{ .region }}
+    {{- end }}
+  project: {{ .Values.project_id }}
+  region: {{ .Values.region }}

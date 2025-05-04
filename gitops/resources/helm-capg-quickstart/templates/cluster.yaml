@@ -1,0 +1,23 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: {{ .Values.cluster.name}}
+  namespace: {{ .Release.Namespace }}
+spec:
+  clusterNetwork:
+    services:
+      cidrBlocks:
+      - {{ .Values.cluster.network.services_cidr }}
+    pods:
+      cidrBlocks:
+      - {{ .Values.cluster.network.pods_cidr }}
+    apiServerPort: 6443
+    serviceDomain: franzu.dev
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: {{ .Values.cluster.name }}-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: GCPCluster
+    name: {{ .Values.cluster.name }}
