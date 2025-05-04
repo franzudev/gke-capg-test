@@ -15,7 +15,7 @@ repos:
   - id: checkov
     name: Checkov
     description: This hook runs checkov.
-    entry: checkov -d .
+    entry: checkov -d ./terraform
     language: python
     pass_filenames: false
     always_run: false
